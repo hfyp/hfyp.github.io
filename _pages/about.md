@@ -12,9 +12,107 @@ During my previous studies, I have worked on **exoskeleton control**, **quadrupe
 
 My broader research interests span **physical human-robot interaction (pHRI)**, **adaptive control**, and **robot perception**, with the goal of creating **robotic systems** that can **safely and reliably share the same workspace with humans**.  
 
+EDUCATION
+======
+
+**University of California, Los Angeles (UCLA), M.S.**  
+Los Angeles, United States · 09/2024–Present  
+- Major: Mechanical Engineering  
+- Cumulative GPA: 3.96/4.00  
+
+**National University of Singapore Research Institute (NUSRI)**  
+Suzhou, China · 09/2023–05/2024  
+- Major: Mechanical Engineering (senior year exchange program)  
+- Average Mark: 90.20/100.00  
+
+**Beijing University of Technology (BJUT), B.S.**  
+Beijing, China · 09/2020–06/2024  
+- Bachelor of Engineering in Robotics  
+- Cumulative GPA: 3.70/4.00  
+- Awards: Overseas Study Scholarship (over $4,000), 11/2023  
+  - Merit Scholarship for Academic Excellence, 2020–2021 & 2021–2022  
 
 
-A data-driven personal website
+PUBLICATION
+======
+
+**Under Review**
+- Chen, G., **Huangfu, Y.**, Zhou, M., Li, X., & Rosen, J.  
+  *A Self-Interactive Assist-as-Needed Controller for Upper Limb Rehabilitation.*  
+  *IEEE Transactions on Robotics (T-RO)*  
+
+- Chen, G., **Huangfu, Y.**, Li, X., Ren, R., & Rosen, J.  
+  *An Adaptive Control Based on Error-Aware Greedy Strategy for Upper Limb Rehabilitation.*  
+  *IEEE Robotics and Automation Letters (RA-L)*  
+
+- Li, X., Chen, G., **Huangfu, Y.**, & Rosen, J.  
+  *Variable Admittance Control of a Robotic Arm Providing Human Body Weight Support and Operational Transparency.*  
+  *IEEE Transactions on Mechatronics (T-Mech)*  
+
+**Published**
+- Chen, T., **Huangfu, Y.**, Srigrarom, S., & Khoo, B. C.  
+  *Path Planning and Motion Control of Robot Dog Through Rough Terrain.*  
+  *Sensors*, 24(22): 7306, 2024.  
+  doi:10.3390/s24227306  
+
+- Zhang, C., Cui, S., Wang, S., Hu, J., **Huangfu, Y.**, & Zhang, B.  
+  *High-Precision 3D Reconstruction with Refractive Calibration of GelStereo Sensors.*  
+  *Sensors*, 23(5): 2675, 2023.  
+  doi:10.3390/s23052675  
+
+
+ACADEMIC EXPERIENCES
+======
+
+**Human Sensory Integration Modeling via Multi-Modal Mobile Tracking**  
+Advisor: Prof. Kyle Yoshida, UCLA · 07/2025–Present  
+*Mohala Lab, University of California, Los Angeles*  
+- Developed an iOS application enabling multi-modal (visual, auditory, haptic) feedback for human tracking experiments, designed to model sensory response linearity and detect potential neuropathy-related impairments  
+- Built a data logging and trajectory tracking pipeline, and utilized MATLAB for visualization, signal processing, and quantitative analysis of participant performance  
+- Assisted in co-advising undergraduate researchers by troubleshooting Swift programming issues and supporting experimental protocol implementation  
+
+**Assist-as-Needed Controller for Upper Limb Rehabilitation with Exoskeleton**  
+Advisor: Prof. Jacob Rosen, UCLA · 09/2024–Present  
+*Bionics Lab, University of California, Los Angeles*  
+- Designed an Assist-as-Needed (AAN) controller in C++ combining Greedy strategy and RBF-based adaptive learning to model patient-specific motor capability for upper limb rehabilitation  
+- Developed UDP-based interface in MATLAB for real-time monitoring of trajectory and patient performance  
+- Designed QT GUI and interaction logic with C++ to facilitate precise parameter tuning during experiments  
+
+**Preliminary Path Planning and Motion Control of Robot Dog**  
+Advisor: Prof. Boo Cheong Khoo, NUS · 09/2023–09/2024  
+*National University of Singapore (Suzhou) Research Institute*  
+- Designed and simulated vision-based rough-terrain navigation using RGB-Depth camera point clouds, achieving LiDAR-level SLAM accuracy  
+- Implemented ROS-based gait control and obstacle-avoidance testing in Gazebo and MATLAB environments  
+
+**3D Reconstruction Study with GelStereo-Type Sensors**  
+Advisor: Dr. Shuo Wang, CASIA · 07/2022–08/2023  
+*Institute of Automation, Chinese Academy of Sciences*  
+- Developed automated data acquisition and force–displacement calibration pipelines for GelStereo tactile sensors  
+- Conducted UR5 robot arm simulation and sensor integration on PyBullet for 3D contact reconstruction analysis  
+
+
+PROFESSIONAL SERVICE
+======
+
+- **Teaching Assistant**: MECH&AE M20 Introduction to Computer Programming with MATLAB  
+  Winter 2026, UCLA  
+
+- **Reader**: MECH&AE 263E Bionic Systems Engineering  
+  Fall 2025, UCLA  
+
+- **Course Assistant**: Simulation of Robot System  
+  Spring 2023, BJUT  
+
+
+RELEVANT SKILLS
+======
+
+- **Simulation Environment**: Gazebo, MuJoCo, PyBullet  
+- **Framework**: Robot Operating System (ROS), QT, YOLO, OpenCV  
+- **Programming Language**: MATLAB, C++, Python, Swift  
+- **Hardware Design**: SolidWorks, AutoCAD, Adams  
+
+<!-- A data-driven personal website
 ======
 Like many other Jekyll-based GitHub Pages templates, Academic Pages makes you separate the website's content from its form. The content & metadata of your website are in structured Markdown files, while various other files constitute the theme, specifying how to transform that content & metadata into HTML pages. You keep these various Markdown (.md), YAML (.yml), HTML, and CSS files in a public GitHub repository. Each time you commit and push an update to the repository, the [GitHub pages](https://pages.github.com/) service creates static HTML pages based on these files, which are hosted on GitHub's servers free of charge.
 
@@ -56,4 +154,4 @@ Example: editing a Markdown file for a talk
 
 For more info
 ------
-More info about configuring Academic Pages can be found in [the guide](https://academicpages.github.io/markdown/), the [growing wiki](https://github.com/academicpages/academicpages.github.io/wiki), and you can always [ask a question on GitHub](https://github.com/academicpages/academicpages.github.io/discussions). The [guides for the Minimal Mistakes theme](https://mmistakes.github.io/minimal-mistakes/docs/configuration/) (which this theme was forked from) might also be helpful.
+More info about configuring Academic Pages can be found in [the guide](https://academicpages.github.io/markdown/), the [growing wiki](https://github.com/academicpages/academicpages.github.io/wiki), and you can always [ask a question on GitHub](https://github.com/academicpages/academicpages.github.io/discussions). The [guides for the Minimal Mistakes theme](https://mmistakes.github.io/minimal-mistakes/docs/configuration/) (which this theme was forked from) might also be helpful. -->
