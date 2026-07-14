@@ -15,6 +15,13 @@
             {% endif %}
             <li class="masthead__menu-item"><a href="{{ domain }}{{ link.url }}">{{ link.title }}</a></li>
           {% endfor %}
+          <li class="masthead__menu-item persist mode-switch-item">
+            <span class="mode-switch-label" aria-hidden="true">Classic</span>
+            <a class="mode-switch-link" href="{{ base_path }}/museum/" aria-label="Switch to the immersive 3D museum">
+              <span class="mode-switch-dot" aria-hidden="true"></span>
+              Immersive
+            </a>
+          </li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
             <a role="button" aria-labelledby="theme-icon"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="toggle theme"></i></a>
           </li>

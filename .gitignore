@@ -14,6 +14,11 @@ package-lock.json
 
 # Ignore the vendor file and bundle for alternative installation
 vendor/
+
+# The immersive museum intentionally ships a small, pinned Three.js runtime so
+# GitHub Pages can load it without an external CDN.
+!museum/vendor/
+!museum/vendor/**
 .bundle/
 
 # Ignore folders related to IDEs

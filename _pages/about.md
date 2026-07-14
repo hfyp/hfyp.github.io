@@ -6,7 +6,7 @@ redirect_from:
   - /about/
   - /about.html
 ---
-I am currently a Master’s student in **Mechanical Engineering** at the University of California, Los Angeles (**UCLA**), with research interests in **robotics** and **control**. I received my B.Eng. in **Robotics** from Beijing University of Technology (**BJUT**) in 2024, and spent my senior year as an exchange student at the National University of Singapore (**NUS**) Suzhou Research Institute.  
+I am currently a **second-year PhD student** in **Mechanical Engineering** at the University of California, Los Angeles (**UCLA**), with research interests in **robotics** and **control**. I received my B.Eng. in **Robotics** from Beijing University of Technology (**BJUT**) in 2024, and spent my senior year as an exchange student at the National University of Singapore (**NUS**) Suzhou Research Institute.
 
 During my previous studies, I have worked on **exoskeleton control**, **quadruped robot path planning**, and **tactile sensor calibration**.  
 
@@ -15,7 +15,7 @@ My broader research interests span **physical human-robot interaction (pHRI)**, 
 EDUCATION
 ======
 
-**University of California, Los Angeles (UCLA), M.S.**  
+**University of California, Los Angeles (UCLA), Ph.D.**<br>
 Los Angeles, United States · 09/2024–Present  
 - Major: Mechanical Engineering  
 - Cumulative GPA: 3.96/4.00  

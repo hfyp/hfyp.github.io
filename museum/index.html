@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0e0e0b" />
+    <meta name="description" content="An immersive, walkable museum of Yipeng Huangfu's research, education, projects, and interests." />
+    <title>Immersive Museum · Yipeng Huangfu</title>
+    <link rel="stylesheet" href="./museum.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./vendor/three.module.min.js",
+          "three/addons/": "./vendor/addons/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main id="museum" aria-label="Immersive portfolio museum">
+      <div id="scene" aria-hidden="true"></div>
+
+      <header class="museum-nav">
+        <a class="museum-brand" href="../" aria-label="Yipeng Huangfu classic portfolio">
+          <span class="museum-brand__name">Yipeng Huangfu</span>
+          <span class="museum-brand__place">Museum of Work &amp; Curiosity</span>
+        </a>
+        <div class="museum-mode">
+          <span class="museum-mode__current"><i></i> Immersive</span>
+          <a href="../">Classic</a>
+        </div>
+      </header>
+
+      <div class="room-chip" id="room-chip">Central Gallery</div>
+      <div class="crosshair" aria-hidden="true"></div>
+      <div class="interact-prompt" id="interact-prompt" role="status"></div>
+      <div class="story-toast" id="story-toast" role="status"></div>
+
+      <aside class="museum-map" aria-label="Museum map">
+        <p>Open gallery</p>
+        <div class="map-grid">
+          <span>Academic</span><span>Projects</span>
+          <span>Personal</span><span>Interaction</span>
+          <b id="map-marker" aria-hidden="true"></b>
+        </div>
+      </aside>
+
+      <aside class="control-debug" id="control-debug" aria-live="polite">
+        <div class="control-debug__heading">
+          <span><i></i> Input diagnostics</span>
+          <button id="reset-position" type="button" title="Return to the museum entrance">Reset <kbd>R</kbd></button>
+        </div>
+        <pre id="debug-output">Waiting for input…</pre>
+      </aside>
+
+      <section class="entry-screen" id="entry-screen">
+        <div class="entry-screen__content">
+          <p class="eyebrow">A WALKABLE PORTFOLIO · 2026</p>
+          <h1>Four rooms.<br />One evolving practice.</h1>
+          <p class="entry-copy">Walk through education, research projects, personal interests, and a stage reserved for future interaction experiments.</p>
+          <button id="enter-button" type="button">Enter the museum <span>→</span></button>
+          <p class="controls-copy"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / arrow keys move &nbsp;·&nbsp; <kbd>Shift</kbd> sprint &nbsp;·&nbsp; mouse look &nbsp;·&nbsp; <kbd>E</kbd> inspect &nbsp;·&nbsp; <kbd>R</kbd> reset &nbsp;·&nbsp; <kbd>Esc</kbd> pause</p>
+          <a class="entry-classic" href="../">Prefer a quick read? Open the Classic portfolio</a>
+        </div>
+      </section>
+
+      <section class="exhibit-modal" id="exhibit-modal" aria-modal="true" role="dialog" aria-labelledby="modal-title" hidden>
+        <div class="exhibit-modal__card">
+          <p class="eyebrow" id="modal-kicker">EXHIBIT</p>
+          <h2 id="modal-title"></h2>
+          <div id="modal-body"></div>
+          <div id="modal-links" class="modal-links"></div>
+          <button id="modal-close" type="button">Return to the gallery <span>Esc</span></button>
+        </div>
+      </section>
+
+      <div class="mobile-controls" id="mobile-controls" aria-label="Movement controls">
+        <button data-key="KeyW" aria-label="Move forward">↑</button>
+        <button data-key="KeyA" aria-label="Move left">←</button>
+        <button data-key="KeyS" aria-label="Move backward">↓</button>
+        <button data-key="KeyD" aria-label="Move right">→</button>
+      </div>
+
+      <noscript><p class="no-webgl">This museum requires JavaScript. The <a href="../">Classic portfolio</a> remains fully available.</p></noscript>
+    </main>
+    <script type="module" src="./museum.js?v=8"></script>
+  </body>
+</html>
