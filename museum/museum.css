@@ -252,12 +252,42 @@ kbd { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15)
 #modal-close span { color: #aaa697; font-size: .65rem; margin-left: .7rem; }
 
 .mobile-controls {
+  align-items: flex-end;
   bottom: max(1.15rem, env(safe-area-inset-bottom));
   display: none;
+  gap: .75rem;
   left: max(1.1rem, env(safe-area-inset-left));
   position: fixed;
   touch-action: none;
   z-index: 18;
+}
+
+.mobile-actions {
+  display: grid;
+  gap: .55rem;
+  touch-action: none;
+}
+
+.mobile-action {
+  -webkit-touch-callout: none;
+  background: rgba(10,10,8,.72);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 999px;
+  color: #eee6d4;
+  font: 700 .68rem/1 Arial, sans-serif;
+  letter-spacing: .08em;
+  min-height: 2.8rem;
+  min-width: 4.7rem;
+  padding: .75rem;
+  text-transform: uppercase;
+  touch-action: none;
+  user-select: none;
+}
+
+.mobile-action:active,
+.mobile-action.is-active {
+  background: #eee6d4;
+  color: #11110e;
 }
 
 .mobile-joystick {
@@ -298,7 +328,7 @@ kbd { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15)
 .no-webgl { background: #111; inset: 0; margin: 0; padding: 3rem; position: fixed; z-index: 50; }
 
 @media (pointer: coarse), (max-width: 760px) {
-  .mobile-controls { display: block; }
+  .mobile-controls { display: flex; }
   .museum-map { display: none; }
   .room-chip { bottom: 1rem; left: auto; right: 1rem; transform: none; }
   .controls-copy { max-width: 18rem; }

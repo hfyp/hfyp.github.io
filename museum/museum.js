@@ -21,6 +21,8 @@ const modalLinks = document.querySelector('#modal-links');
 const modalClose = document.querySelector('#modal-close');
 const mobileJoystick = document.querySelector('#mobile-joystick');
 const mobileJoystickThumb = document.querySelector('#mobile-joystick-thumb');
+const mobileJumpButton = document.querySelector('#mobile-jump');
+const mobileCrouchButton = document.querySelector('#mobile-crouch');
 
 const isTouch = matchMedia('(pointer: coarse)').matches;
 const scene = new THREE.Scene();
@@ -75,12 +77,22 @@ let fpsSampleStarted = performance.now();
 let mobilePointerId = null;
 
 const CAMERA_HEIGHT = 1.72;
+const CROUCH_HEIGHT = 1.06;
 const CEILING_HEIGHT = 7.35;
 const WALK_SPEED = 10.5;
 const SPRINT_SPEED = 16;
+const CROUCH_SPEED = 5.4;
 const ACCELERATION = 12;
+const JUMP_VELOCITY = 5.8;
+const GRAVITY = 17.5;
+const STANCE_RESPONSE = 14;
 const MOVING_PIXEL_RATIO = Math.min(devicePixelRatio, 1.05);
 const RESTING_PIXEL_RATIO = Math.min(devicePixelRatio, 1.75);
+let currentEyeHeight = CAMERA_HEIGHT;
+let jumpOffset = 0;
+let verticalVelocity = 0;
+let grounded = true;
+let mobileCrouchActive = false;
 
 const MAT = {
   wall: new THREE.MeshStandardMaterial({ color: 0x393832, roughness: 0.92 }),
@@ -511,9 +523,44 @@ function movePlayer(movement, source = 'frame loop') {
     if (canOccupy(slideZ)) camera.position.z = slideZ.z;
     else playerVelocity.z = 0;
   }
-  camera.position.y = CAMERA_HEIGHT;
   const actualDistance = camera.position.distanceTo(origin);
   lastMovement = `${source}: ${actualDistance.toFixed(3)} m${movementBlocked ? ' (collision)' : ''}`;
+}
+
+function crouchRequested() {
+  return mobileCrouchActive
+    || pressedKeys.has('ControlLeft')
+    || pressedKeys.has('ControlRight')
+    || pressedKeys.has('KeyC');
+}
+
+function attemptJump(source = 'keyboard') {
+  if (!started || !inputActive || modalOpen || !grounded) return false;
+  grounded = false;
+  verticalVelocity = JUMP_VELOCITY;
+  lastInputType = `jump started (${source})`;
+  return true;
+}
+
+function updateVerticalMotion(delta) {
+  const targetEyeHeight = crouchRequested() ? CROUCH_HEIGHT : CAMERA_HEIGHT;
+  currentEyeHeight = THREE.MathUtils.lerp(
+    currentEyeHeight,
+    targetEyeHeight,
+    1 - Math.exp(-STANCE_RESPONSE * delta)
+  );
+
+  if (!grounded) {
+    verticalVelocity -= GRAVITY * delta;
+    jumpOffset += verticalVelocity * delta;
+    if (jumpOffset <= 0) {
+      jumpOffset = 0;
+      verticalVelocity = 0;
+      grounded = true;
+    }
+  }
+  camera.position.y = currentEyeHeight + jumpOffset;
+  return !grounded || Math.abs(currentEyeHeight - targetEyeHeight) > .005;
 }
 
 function updateMovement(delta) {
@@ -538,8 +585,11 @@ function updateMovement(delta) {
     forward.normalize();
     const right = new THREE.Vector3().crossVectors(forward, camera.up).normalize();
     const inputMagnitude = Math.min(1, Math.hypot(forwardInput, rightInput));
+    const requestedSpeed = crouchRequested()
+      ? CROUCH_SPEED
+      : (pressedKeys.has('ShiftLeft') || pressedKeys.has('ShiftRight') ? SPRINT_SPEED : WALK_SPEED);
     const targetVelocity = forward.multiplyScalar(forwardInput).add(right.multiplyScalar(rightInput)).normalize()
-      .multiplyScalar((pressedKeys.has('ShiftLeft') || pressedKeys.has('ShiftRight') ? SPRINT_SPEED : WALK_SPEED) * inputMagnitude);
+      .multiplyScalar(requestedSpeed * inputMagnitude);
     playerVelocity.lerp(targetVelocity, 1 - Math.exp(-ACCELERATION * delta));
   } else {
     // Input is authoritative: releasing a key or joystick stops movement on
@@ -620,12 +670,23 @@ function clearMovementKeys() {
   pressedKeys.clear();
   playerVelocity.set(0, 0, 0);
   mobileMove.set(0, 0);
+  mobileCrouchActive = false;
   mobilePointerId = null;
+  if (touchLook && renderer.domElement.hasPointerCapture(touchLook.pointerId)) {
+    renderer.domElement.releasePointerCapture(touchLook.pointerId);
+  }
+  touchLook = null;
   mobileJoystickThumb.style.transform = 'translate3d(0, 0, 0)';
+  mobileCrouchButton.classList.remove('is-active');
+  mobileCrouchButton.setAttribute('aria-pressed', 'false');
 }
 
 function resetPlayer(reason = 'manual reset') {
   clearMovementKeys();
+  currentEyeHeight = CAMERA_HEIGHT;
+  jumpOffset = 0;
+  verticalVelocity = 0;
+  grounded = true;
   camera.position.set(0, CAMERA_HEIGHT, 13.2);
   camera.rotation.set(0, 0, 0, 'YXZ');
   movementBlocked = false;
@@ -657,6 +718,7 @@ const keyAliases = {
 };
 const movementKeys = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight']);
 const modifierKeys = new Set(['ShiftLeft', 'ShiftRight']);
+const crouchKeys = new Set(['ControlLeft', 'ControlRight', 'KeyC']);
 
 function handleKeyDown(event) {
   const code = event.code || keyAliases[event.key] || keyAliases[event.key?.toLowerCase()];
@@ -667,6 +729,14 @@ function handleKeyDown(event) {
     event.preventDefault();
   }
   if (modifierKeys.has(code)) pressedKeys.add(code);
+  if (crouchKeys.has(code) && started && inputActive && !modalOpen) {
+    pressedKeys.add(code);
+    event.preventDefault();
+  }
+  if (code === 'Space' && started && inputActive && !modalOpen) {
+    event.preventDefault();
+    if (!event.repeat) attemptJump('keyboard');
+  }
   if (!event.repeat) console.info('[museum input] keydown:', code, { active: inputActive, locked: controls.isLocked });
   if (code === 'KeyR') resetPlayer('keyboard reset');
   if (code === 'KeyE' && currentInteractive && !modalOpen) openExhibit(currentInteractive.userData.exhibit);
@@ -682,6 +752,7 @@ function handleKeyUp(event) {
     console.info('[museum input] keyup:', code, camera.position.toArray());
   }
   if (modifierKeys.has(code)) pressedKeys.delete(code);
+  if (crouchKeys.has(code)) pressedKeys.delete(code);
 }
 
 // Window-level capture remains active regardless of which overlay most recently
@@ -736,30 +807,56 @@ const releaseMobileJoystick = (event) => {
 mobileJoystick.addEventListener('pointerup', releaseMobileJoystick);
 mobileJoystick.addEventListener('pointercancel', releaseMobileJoystick);
 
+mobileJumpButton.addEventListener('pointerdown', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  attemptJump('touch');
+});
+mobileCrouchButton.addEventListener('pointerdown', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  mobileCrouchActive = !mobileCrouchActive;
+  mobileCrouchButton.classList.toggle('is-active', mobileCrouchActive);
+  mobileCrouchButton.setAttribute('aria-pressed', String(mobileCrouchActive));
+});
+
 renderer.domElement.addEventListener('contextmenu', (event) => event.preventDefault());
 renderer.domElement.addEventListener('dragstart', (event) => event.preventDefault());
 mobileJoystick.addEventListener('contextmenu', (event) => event.preventDefault());
 mobileJoystick.addEventListener('dragstart', (event) => event.preventDefault());
+mobileJumpButton.addEventListener('contextmenu', (event) => event.preventDefault());
+mobileCrouchButton.addEventListener('contextmenu', (event) => event.preventDefault());
 
-renderer.domElement.addEventListener('touchstart', (event) => {
-  if (!started || event.touches.length !== 1) return;
+// The joystick and camera each own a separate pointerId. This lets one finger
+// remain captured by the joystick while a second finger turns the camera.
+// Pointer capture keeps each role stable even if a finger crosses regions.
+renderer.domElement.addEventListener('pointerdown', (event) => {
+  if (event.pointerType !== 'touch' || !started || modalOpen || touchLook) return;
+  if (event.pointerId === mobilePointerId) return;
   event.preventDefault();
-  touchLook = { x: event.touches[0].clientX, y: event.touches[0].clientY };
-}, { passive: false });
-renderer.domElement.addEventListener('touchmove', (event) => {
-  if (!touchLook || event.touches.length !== 1 || modalOpen) return;
+  touchLook = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
+  renderer.domElement.setPointerCapture(event.pointerId);
+});
+renderer.domElement.addEventListener('pointermove', (event) => {
+  if (!touchLook || event.pointerId !== touchLook.pointerId || modalOpen) return;
   event.preventDefault();
-  const touch = event.touches[0];
-  const dx = touch.clientX - touchLook.x;
-  const dy = touch.clientY - touchLook.y;
+  const dx = event.clientX - touchLook.x;
+  const dy = event.clientY - touchLook.y;
   camera.rotation.y -= dx * .004;
   camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x - dy * .0035, -1.25, 1.25);
-  touchLook = { x: touch.clientX, y: touch.clientY };
-}, { passive: false });
-renderer.domElement.addEventListener('touchend', (event) => {
+  touchLook.x = event.clientX;
+  touchLook.y = event.clientY;
+});
+const releaseTouchLook = (event) => {
+  if (!touchLook || event.pointerId !== touchLook.pointerId) return;
   event.preventDefault();
   touchLook = null;
-}, { passive: false });
+};
+renderer.domElement.addEventListener('pointerup', releaseTouchLook);
+renderer.domElement.addEventListener('pointercancel', releaseTouchLook);
+renderer.domElement.addEventListener('lostpointercapture', (event) => {
+  if (touchLook?.pointerId === event.pointerId) touchLook = null;
+});
 
 addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight;
@@ -775,7 +872,8 @@ renderer.shadowMap.needsUpdate = true;
 
 function animate() {
   const delta = Math.min(clock.getDelta(), .1);
-  const playerIsMoving = started && inputActive && !modalOpen ? updateMovement(delta) : false;
+  const stanceIsMoving = started ? updateVerticalMotion(delta) : false;
+  const playerIsMoving = started && inputActive && !modalOpen ? updateMovement(delta) || stanceIsMoving : stanceIsMoving;
   robotDog.update(delta, camera.position);
   wallExoArm.update(delta);
   const now = performance.now();
@@ -804,7 +902,9 @@ function animate() {
       `Keys down  : ${down.join(', ') || 'none'}`,
       `Input      : ${inputActive ? 'ACTIVE' : 'PAUSED'}`,
       `Pointer    : ${controls.isLocked ? 'LOCKED' : 'UNLOCKED'}`,
-      `Position   : x ${camera.position.x.toFixed(2)}  z ${camera.position.z.toFixed(2)}`,
+      `Touch IDs  : move ${mobilePointerId ?? '-'} / look ${touchLook?.pointerId ?? '-'}`,
+      `Position   : x ${camera.position.x.toFixed(2)}  y ${camera.position.y.toFixed(2)}  z ${camera.position.z.toFixed(2)}`,
+      `Stance     : ${crouchRequested() ? 'CROUCH' : 'STAND'} · ${grounded ? 'grounded' : `airborne ${verticalVelocity.toFixed(2)} m/s`}`,
       `Collision  : ${movementBlocked ? 'BLOCKED' : 'clear'}`,
       `Velocity   : ${playerVelocity.length().toFixed(2)} m/s`,
       `Frame rate : ${measuredFps.toFixed(0)} fps · ${movingQuality ? 'motion' : 'detail'} quality`,

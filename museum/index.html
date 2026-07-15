@@ -60,7 +60,7 @@
           <h1>Four rooms.<br />One evolving practice.</h1>
           <p class="entry-copy">Walk through education, research projects, personal interests, and a stage reserved for future interaction experiments.</p>
           <button id="enter-button" type="button">Enter the museum <span>→</span></button>
-          <p class="controls-copy"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / arrow keys move &nbsp;·&nbsp; <kbd>Shift</kbd> sprint &nbsp;·&nbsp; mouse look &nbsp;·&nbsp; <kbd>E</kbd> inspect &nbsp;·&nbsp; approach the robot dog within its white ring to guide it &nbsp;·&nbsp; <kbd>R</kbd> reset &nbsp;·&nbsp; <kbd>Esc</kbd> pause</p>
+          <p class="controls-copy"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / arrow keys move &nbsp;·&nbsp; <kbd>Shift</kbd> sprint &nbsp;·&nbsp; <kbd>Space</kbd> jump &nbsp;·&nbsp; hold <kbd>Ctrl</kbd> / <kbd>C</kbd> crouch-walk &nbsp;·&nbsp; mouse look &nbsp;·&nbsp; <kbd>E</kbd> inspect &nbsp;·&nbsp; approach the robot dog within its white ring to guide it &nbsp;·&nbsp; <kbd>R</kbd> reset &nbsp;·&nbsp; <kbd>Esc</kbd> pause</p>
           <a class="entry-classic" href="../">Prefer a quick read? Open the Classic portfolio</a>
         </div>
       </section>
@@ -79,10 +79,14 @@
         <div class="mobile-joystick" id="mobile-joystick" role="application" aria-label="Drag to move">
           <span class="mobile-joystick__thumb" id="mobile-joystick-thumb" aria-hidden="true"></span>
         </div>
+        <div class="mobile-actions" aria-label="Jump and crouch controls">
+          <button class="mobile-action" id="mobile-jump" type="button">Jump</button>
+          <button class="mobile-action" id="mobile-crouch" type="button" aria-pressed="false">Crouch</button>
+        </div>
       </div>
 
       <noscript><p class="no-webgl">This museum requires JavaScript. The <a href="../">Classic portfolio</a> remains fully available.</p></noscript>
     </main>
-    <script type="module" src="./museum.js?v=18"></script>
+    <script type="module" src="./museum.js?v=20"></script>
   </body>
 </html>
