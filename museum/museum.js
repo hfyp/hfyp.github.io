@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+import { Lite3RobotDog } from './robot-dog.js?v=6';
+import { WallExoArm } from './exo-arm.js?v=6';
 
 const sceneHost = document.querySelector('#scene');
 const entryScreen = document.querySelector('#entry-screen');
@@ -8,6 +10,7 @@ const prompt = document.querySelector('#interact-prompt');
 const roomChip = document.querySelector('#room-chip');
 const storyToast = document.querySelector('#story-toast');
 const mapMarker = document.querySelector('#map-marker');
+const dogMapMarker = document.querySelector('#dog-map-marker');
 const debugOutput = document.querySelector('#debug-output');
 const resetPositionButton = document.querySelector('#reset-position');
 const modal = document.querySelector('#exhibit-modal');
@@ -16,6 +19,8 @@ const modalTitle = document.querySelector('#modal-title');
 const modalBody = document.querySelector('#modal-body');
 const modalLinks = document.querySelector('#modal-links');
 const modalClose = document.querySelector('#modal-close');
+const mobileJoystick = document.querySelector('#mobile-joystick');
+const mobileJoystickThumb = document.querySelector('#mobile-joystick-thumb');
 
 const isTouch = matchMedia('(pointer: coarse)').matches;
 const scene = new THREE.Scene();
@@ -47,6 +52,7 @@ const collisions = [];
 const interactives = [];
 const pressedKeys = new Set();
 const playerVelocity = new THREE.Vector3();
+const mobileMove = new THREE.Vector2();
 const visitedRooms = new Set();
 let currentInteractive = null;
 let started = false;
@@ -66,13 +72,13 @@ let movementSettledAt = 0;
 let measuredFps = 60;
 let fpsFrames = 0;
 let fpsSampleStarted = performance.now();
+let mobilePointerId = null;
 
 const CAMERA_HEIGHT = 1.72;
 const CEILING_HEIGHT = 7.35;
 const WALK_SPEED = 10.5;
 const SPRINT_SPEED = 16;
 const ACCELERATION = 12;
-const RELEASE_DRAG = 5.2;
 const MOVING_PIXEL_RATIO = Math.min(devicePixelRatio, 1.05);
 const RESTING_PIXEL_RATIO = Math.min(devicePixelRatio, 1.75);
 
@@ -346,10 +352,10 @@ for (const [x, z, color] of [[-8.3,-8.3,0xffd99c],[8.3,-8.3,0xd9e5ff],[-8.3,8.3,
   scene.add(light);
 }
 
-addLabel('Academic Journey', -8.2, 4.05, -15.78, 0, 5.2);
-addLabel('Projects & Outcomes', 8.2, 4.05, -15.78, 0, 5.2);
-addLabel('About the Researcher', -15.78, 4.35, 9.7, Math.PI / 2, 5.2);
-addLabel('Interaction Stage', 15.78, 4.05, 8.2, -Math.PI / 2, 5.2);
+addLabel('Academic Journey', -8.2, 4.75, -15.78, 0, 5.2);
+addLabel('Projects & Outcomes', 8.2, 4.68, -15.78, 0, 5.2);
+addLabel('About the Researcher', -15.78, 4.72, 9.7, Math.PI / 2, 5.2);
+addLabel('Interaction Stage', 15.78, 5.62, 8.2, -Math.PI / 2, 5.2);
 
 academic.forEach((item, i) => addPaper(item, -11.4 + i * 3.15, 2.25, -15.76, 0, 2.18));
 projects.forEach((item, i) => addPaper(item, 3.2 + i * 3.05, 2.2, -15.76, 0, 2.02));
@@ -430,6 +436,31 @@ function addPopcornBucket(x, z) {
 box(13.55, .16, 8.2, 1.75, .32, 1.75, MAT.darkWood, { shadow: true });
 addPopcornBucket(13.55, 8.2);
 
+const robotDog = new Lite3RobotDog(scene, {
+  urdfUrl: './models/lite3/Lite3.urdf',
+  // The third projects paper is "Robot Dog on Rough Terrain" at x = 9.3.
+  exhibitTarget: new THREE.Vector3(9.3, 0, -12.65),
+  exhibitLookTarget: new THREE.Vector3(9.3, 0, -15.76),
+  guideSpeed: WALK_SPEED,
+  debug: new URLSearchParams(location.search).get('dogdebug') === '1'
+});
+robotDog.load().catch((error) => {
+  robotDog.state = 'model error';
+  robotDog.urdfStatus = 'Lite3 detailed model failed to build';
+  console.error('[robot dog] model setup failed', error);
+});
+
+// The plaque and the mirrored shoulder offsets share the same X symmetry axis.
+addLabel('EXO UL8', -.25, 4.38, -15.78, 0, 2.45);
+const wallExoArm = new WallExoArm(scene, {
+  baseUrl: './models/exo-ul8/',
+  position: new THREE.Vector3(-.25, 3.3, -15.58)
+});
+wallExoArm.load().catch((error) => {
+  wallExoArm.status = 'model error';
+  console.error('[exoskeleton] model setup failed', error);
+});
+
 function currentRoomName(position) {
   if (Math.abs(position.x) < 1.7 || Math.abs(position.z) < 1.7) return ['Central Gallery', 'central'];
   if (position.x < 0 && position.z < 0) return ['Academic Journey', 'academic'];
@@ -486,10 +517,18 @@ function movePlayer(movement, source = 'frame loop') {
 }
 
 function updateMovement(delta) {
-  const forwardInput = Number(pressedKeys.has('KeyW') || pressedKeys.has('ArrowUp'))
-    - Number(pressedKeys.has('KeyS') || pressedKeys.has('ArrowDown'));
-  const rightInput = Number(pressedKeys.has('KeyD') || pressedKeys.has('ArrowRight'))
-    - Number(pressedKeys.has('KeyA') || pressedKeys.has('ArrowLeft'));
+  const forwardInput = THREE.MathUtils.clamp(
+    Number(pressedKeys.has('KeyW') || pressedKeys.has('ArrowUp'))
+      - Number(pressedKeys.has('KeyS') || pressedKeys.has('ArrowDown')) + mobileMove.y,
+    -1,
+    1
+  );
+  const rightInput = THREE.MathUtils.clamp(
+    Number(pressedKeys.has('KeyD') || pressedKeys.has('ArrowRight'))
+      - Number(pressedKeys.has('KeyA') || pressedKeys.has('ArrowLeft')) + mobileMove.x,
+    -1,
+    1
+  );
   const hasInput = forwardInput !== 0 || rightInput !== 0;
 
   if (hasInput) {
@@ -498,20 +537,22 @@ function updateMovement(delta) {
     forward.y = 0;
     forward.normalize();
     const right = new THREE.Vector3().crossVectors(forward, camera.up).normalize();
+    const inputMagnitude = Math.min(1, Math.hypot(forwardInput, rightInput));
     const targetVelocity = forward.multiplyScalar(forwardInput).add(right.multiplyScalar(rightInput)).normalize()
-      .multiplyScalar(pressedKeys.has('ShiftLeft') || pressedKeys.has('ShiftRight') ? SPRINT_SPEED : WALK_SPEED);
+      .multiplyScalar((pressedKeys.has('ShiftLeft') || pressedKeys.has('ShiftRight') ? SPRINT_SPEED : WALK_SPEED) * inputMagnitude);
     playerVelocity.lerp(targetVelocity, 1 - Math.exp(-ACCELERATION * delta));
   } else {
-    // Exponential drag leaves a short, natural coast after the key is released.
-    playerVelocity.multiplyScalar(Math.exp(-RELEASE_DRAG * delta));
+    // Input is authoritative: releasing a key or joystick stops movement on
+    // the next animation frame, with no simulated coast.
+    playerVelocity.set(0, 0, 0);
   }
 
   if (playerVelocity.lengthSq() < .004) {
     playerVelocity.set(0, 0, 0);
   } else {
-    movePlayer(playerVelocity.clone().multiplyScalar(delta), hasInput ? 'held key loop' : 'release inertia');
+    movePlayer(playerVelocity.clone().multiplyScalar(delta), 'held input loop');
   }
-  return hasInput || playerVelocity.lengthSq() > .004;
+  return hasInput;
 }
 
 function updateMovementQuality(isMoving, now) {
@@ -578,6 +619,9 @@ function startExperience() {
 function clearMovementKeys() {
   pressedKeys.clear();
   playerVelocity.set(0, 0, 0);
+  mobileMove.set(0, 0);
+  mobilePointerId = null;
+  mobileJoystickThumb.style.transform = 'translate3d(0, 0, 0)';
 }
 
 function resetPlayer(reason = 'manual reset') {
@@ -656,30 +700,66 @@ renderer.domElement.addEventListener('click', () => {
   if (started && currentInteractive && (isTouch || controls.isLocked)) openExhibit(currentInteractive.userData.exhibit);
 });
 
-document.querySelectorAll('.mobile-controls button').forEach((button) => {
-  const code = button.dataset.key;
-  const down = (event) => { event.preventDefault(); pressedKeys.add(code); };
-  const up = (event) => { event.preventDefault(); pressedKeys.delete(code); };
-  button.addEventListener('pointerdown', down);
-  button.addEventListener('pointerup', up);
-  button.addEventListener('pointercancel', up);
-  button.addEventListener('pointerleave', up);
+function updateMobileJoystick(event) {
+  const bounds = mobileJoystick.getBoundingClientRect();
+  const radius = bounds.width * .31;
+  const dx = event.clientX - (bounds.left + bounds.width / 2);
+  const dy = event.clientY - (bounds.top + bounds.height / 2);
+  const length = Math.hypot(dx, dy);
+  const scale = length > radius ? radius / length : 1;
+  const x = dx * scale;
+  const y = dy * scale;
+  mobileMove.set(x / radius, -y / radius);
+  mobileJoystickThumb.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+}
+
+mobileJoystick.addEventListener('pointerdown', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  mobilePointerId = event.pointerId;
+  mobileJoystick.setPointerCapture(event.pointerId);
+  updateMobileJoystick(event);
 });
+mobileJoystick.addEventListener('pointermove', (event) => {
+  if (event.pointerId !== mobilePointerId) return;
+  event.preventDefault();
+  updateMobileJoystick(event);
+});
+const releaseMobileJoystick = (event) => {
+  if (event.pointerId !== mobilePointerId) return;
+  event.preventDefault();
+  mobileMove.set(0, 0);
+  playerVelocity.set(0, 0, 0);
+  mobilePointerId = null;
+  mobileJoystickThumb.style.transform = 'translate3d(0, 0, 0)';
+};
+mobileJoystick.addEventListener('pointerup', releaseMobileJoystick);
+mobileJoystick.addEventListener('pointercancel', releaseMobileJoystick);
+
+renderer.domElement.addEventListener('contextmenu', (event) => event.preventDefault());
+renderer.domElement.addEventListener('dragstart', (event) => event.preventDefault());
+mobileJoystick.addEventListener('contextmenu', (event) => event.preventDefault());
+mobileJoystick.addEventListener('dragstart', (event) => event.preventDefault());
 
 renderer.domElement.addEventListener('touchstart', (event) => {
   if (!started || event.touches.length !== 1) return;
+  event.preventDefault();
   touchLook = { x: event.touches[0].clientX, y: event.touches[0].clientY };
-}, { passive: true });
+}, { passive: false });
 renderer.domElement.addEventListener('touchmove', (event) => {
   if (!touchLook || event.touches.length !== 1 || modalOpen) return;
+  event.preventDefault();
   const touch = event.touches[0];
   const dx = touch.clientX - touchLook.x;
   const dy = touch.clientY - touchLook.y;
   camera.rotation.y -= dx * .004;
   camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x - dy * .0035, -1.25, 1.25);
   touchLook = { x: touch.clientX, y: touch.clientY };
-}, { passive: true });
-renderer.domElement.addEventListener('touchend', () => { touchLook = null; }, { passive: true });
+}, { passive: false });
+renderer.domElement.addEventListener('touchend', (event) => {
+  event.preventDefault();
+  touchLook = null;
+}, { passive: false });
 
 addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight;
@@ -696,6 +776,8 @@ renderer.shadowMap.needsUpdate = true;
 function animate() {
   const delta = Math.min(clock.getDelta(), .1);
   const playerIsMoving = started && inputActive && !modalOpen ? updateMovement(delta) : false;
+  robotDog.update(delta, camera.position);
+  wallExoArm.update(delta);
   const now = performance.now();
   updateMovementQuality(playerIsMoving, now);
 
@@ -708,10 +790,14 @@ function animate() {
     showStory(roomKey);
     mapMarker.style.left = `${THREE.MathUtils.mapLinear(camera.position.x, -16, 16, 4, 96)}%`;
     mapMarker.style.top = `${THREE.MathUtils.mapLinear(camera.position.z, -16, 16, 4, 96)}%`;
+    dogMapMarker.style.left = `${THREE.MathUtils.mapLinear(robotDog.root.position.x, -16, 16, 4, 96)}%`;
+    dogMapMarker.style.top = `${THREE.MathUtils.mapLinear(robotDog.root.position.z, -16, 16, 4, 96)}%`;
     lastUiUpdate = now;
   }
   if (now - lastDebugUpdate > 120) {
     const down = [...pressedKeys];
+    const dog = robotDog.getDebugSnapshot();
+    const exo = wallExoArm.getDebugSnapshot();
     debugOutput.textContent = [
       `Last event : ${lastInput}`,
       `Event state: ${lastInputType}`,
@@ -722,6 +808,12 @@ function animate() {
       `Collision  : ${movementBlocked ? 'BLOCKED' : 'clear'}`,
       `Velocity   : ${playerVelocity.length().toFixed(2)} m/s`,
       `Frame rate : ${measuredFps.toFixed(0)} fps · ${movingQuality ? 'motion' : 'detail'} quality`,
+      `Robot dog : ${dog.state}`,
+      `Dog URDF  : ${dog.urdf}`,
+      `Dog range : ${Number.isFinite(dog.distance) ? `${dog.distance.toFixed(2)} m` : 'waiting'}`,
+      `Dog speed : ${dog.speed.toFixed(2)} m/s · trigger ${dog.enterDistance.toFixed(0)} m / hold ${dog.exitDistance.toFixed(0)} m`,
+      `Dog pos   : x ${dog.position.x.toFixed(2)}  z ${dog.position.z.toFixed(2)}`,
+      `EXO-UL8   : ${exo.status}`,
       `Move count : ${movementAttempts}`,
       `Last move  : ${lastMovement}`
     ].join('\n');

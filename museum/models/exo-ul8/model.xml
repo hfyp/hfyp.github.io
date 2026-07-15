@@ -1,0 +1,152 @@
+<mujoco model="right">
+  <compiler angle="radian" autolimits="true" coordinate="global"/>
+  <size nuserdata="15"/>
+  <asset>
+    <!-- Right Side -->
+    <mesh name="Link0" file="link0.stl" refpos="0 0 0"/>
+    <mesh name="Link1" file="link1.stl" refpos="0 0 0"/>
+    <mesh name="Link2" file="link2.stl" refpos="0 0 0"/>
+    <mesh name="Link3" file="link3.stl" refpos="0 0 0"/>
+    <mesh name="Link4" file="link4.stl" refpos="0 0 0"/>
+    <mesh name="Link5" file="link5.stl" refpos="0 0 0"/>
+    <mesh name="Link6" file="link6.stl" refpos="0 0 0"/>
+    <mesh name="Link7" file="link7.stl" refpos="0 0 0"/>
+
+    <!-- Left Side -->
+    <mesh name="Link0Left" file="link0left.stl" refpos="0 0 0"/>
+    <mesh name="Link1Left" file="link1left.stl" refpos="0 0 0"/>
+    <mesh name="Link2Left" file="link2left.stl" refpos="0 0 0"/>
+    <mesh name="Link3Left" file="link3left.stl" refpos="0 0 0"/>
+    <mesh name="Link4Left" file="link4left.stl" refpos="0 0 0"/>
+    <mesh name="Link5Left" file="link5left.stl" refpos="0 0 0"/>
+    <mesh name="Link6Left" file="link6left.stl" refpos="0 0 0"/>
+    <mesh name="Link7Left" file="link7left.stl" refpos="0 0 0"/>
+
+    <texture name="grid" type="2d" builtin="checker" width="256" height="256" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="2 2" texuniform="true" reflectance=".2"/>
+  </asset>
+  
+  <visual>
+    <global azimuth="90"/>
+  </visual>
+  
+  <worldbody>
+    <geom name="Floor" pos="-0.225 0 -1.3" size="0 0 .05" type="plane" material="grid" condim="3"/>
+    <light name="Spotlight" mode="fixed" pos="-0.225 0 10"/>
+
+    <!-- Right Side -->
+    <body name="Base">
+      <geom type="mesh" rgba="0.75294 0.75294 0.75294 1" mesh="Link0"/>
+
+      <body name="Link1">
+        <inertial pos="0.23524 0.13651 -0.05857" xyaxes="-0.61112 0.63364 0.47438 -0.68617 -0.72285 0.08159" mass="13.85860" diaginertia="0.08565 0.48840 0.53990"/>
+        <joint name="Joint1" pos="0 0 0" axis="0.707107 -0.521334 -0.477714" range="0 1.5708" damping="0.1" frictionloss="10.0"/>
+        <geom type="mesh" rgba="0.75294 0.75294 0.75294 1" mesh="Link1"/>
+
+        <body name="Link2">
+          <inertial pos="0.05823 0.05051 -0.09990" xyaxes="0.08146 0.83151 0.54951 0.72090 -0.42988 0.54361" mass="1.90092" diaginertia="0.00517 0.01295 0.01560"/>
+          <joint name="Joint2" pos="-0.008178 -0.011090 0" axis="0.593426 0.804889 0.0" range="-0.1745 1.2217" damping="0.1" frictionloss="10.0"/>
+          <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="Link2"/>
+
+          <body name="Link3">
+            <inertial pos="0.18029 -0.02337 -0.26411" xyaxes="-0.39956 -0.31532 0.86077 -0.04552 -0.93100 -0.36218" mass="7.74691" diaginertia="0.02506 0.05162 0.05438"/>
+            <joint name="Joint3" pos="-0.008178 -0.011090 -0.302303" axis="0 0 1" range="-0.1745 1.4835" damping="10.0" frictionloss="12.0"/>
+            <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="Link3"/>
+
+            <body name="Link4">
+              <inertial pos="0.01520 -0.03836 -0.37523" xyaxes="0.94455 0.29870 0.13638 -0.32750 0.88704 0.32543" mass="1.30118" diaginertia="0.00235 0.00759 0.00841"/>
+              <joint name="Joint4" pos="-0.006839 0.008910 -0.302303" axis="1 0 0" range="0 1.5708" damping="0.1" frictionloss="10.0"/>
+              <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="Link4"/>
+
+              <body name="Link5">
+                <inertial pos="-0.02256 -0.11140 -0.46887" xyaxes="-0.08702 0.00257 0.99620 -0.49113 -0.87014 -0.04066" mass="2.21552" diaginertia="0.00293 0.00892 0.00999"/>
+                <joint name="Joint5" pos="-0.006839 0.008910 -0.579903" axis="0 0 1" range="-0.4363 0.5236" damping="10.0" frictionloss="15.0"/>
+                <geom type="mesh" rgba="0.75294 0.75294 0.75294 1" mesh="Link5"/>
+
+                <body name="Link6">
+                  <inertial pos="0.09452 -0.02710 -0.58015" xyaxes="-0.00265 1.00000 0.00028 -0.99993 -0.00265 -0.01176" mass="0.98365" diaginertia="0.00064 0.00345 0.00393"/>
+                  <joint name="Joint6" pos="-0.007839 0.023210 -0.579903" axis="0 -1 0" range="-0.5236 0.1745" damping="10.0" frictionloss="25.0"/>
+                  <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="Link6"/>
+                  
+                  <body name="Link7">
+                    <inertial pos="0.01210 0.04501 -0.65481" xyaxes="0.19478 0.90115 0.38729 0.51513 -0.43000 0.74145" mass="0.85610" diaginertia="0.00122 0.00168 0.00236"/>
+                    <joint name="Joint7" pos="-0.007839 0.023210 -0.580003" axis="1 0 0" range="-0.5236 0.5236" damping="10.0" frictionloss="10.0"/>
+                    <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="Link7"/>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <!-- Left Side -->
+    <body name="BaseLeft">
+      <geom type="mesh" rgba="0.75294 0.75294 0.75294 1" mesh="Link0Left" pos="-0.45 0 0"/>
+
+      <body name="Link1Left">
+        <inertial pos="-0.21476 0.13651 -0.05857" xyaxes="-0.61112 -0.63364 -0.47438 0.68617 -0.72285 0.08159" mass="13.85860" diaginertia="0.08565 0.48840 0.53990"/>
+        <joint name="Joint1Left" pos="-0.45 0 0" axis="0.707107 0.521334 0.477714" range="0 1.5708" damping="0.1" frictionloss="10.0"/>
+        <geom type="mesh" rgba="0.75294 0.75294 0.75294 1" mesh="Link1Left" pos="-0.45 0 0"/>
+
+        <body name="Link2Left">
+          <inertial pos="-0.39177 0.05051 -0.09990" xyaxes="0.08146 -0.83151 -0.54951 -0.72090 -0.42988 0.54361" mass="1.90092" diaginertia="0.00517 0.01295 0.01560"/>
+          <joint name="Joint2Left" pos="-0.458178 -0.011090 0" axis="0.593426 -0.804889 0.0" range="-0.1745 1.2217" damping="0.1" frictionloss="10.0"/>
+          <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="Link2Left" pos="-0.45 0 0"/>
+
+          <body name="Link3Left">
+            <inertial pos="-0.26971 -0.02337 -0.26411" xyaxes="-0.39956 0.31532 -0.86077 0.04552 -0.93100 -0.36218" mass="7.74691" diaginertia="0.02506 0.05162 0.05438"/>
+            <joint name="Joint3Left" pos="-0.458178 -0.011090 -0.302303" axis="0 0 -1" range="-0.1745 1.4835" damping="10.0" frictionloss="12.0"/>
+            <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="Link3Left" pos="-0.45 0 0"/>
+
+            <body name="Link4Left">
+              <inertial pos="-0.43480 -0.03836 -0.37523" xyaxes="0.94455 -0.29870 -0.13638 0.32750 0.88704 0.32543" mass="1.30118" diaginertia="0.00235 0.00759 0.00841"/>
+              <joint name="Joint4Left" pos="-0.456839 0.008910 -0.302303" axis="1 0 0" range="0 1.5708" damping="0.1" frictionloss="10.0"/>
+              <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="Link4Left" pos="-0.45 0 0"/>
+
+              <body name="Link5Left">
+                <inertial pos="-0.47256 -0.11140 -0.46887" xyaxes="-0.08702 -0.00257 -0.99620 0.49113 -0.87014 -0.04066" mass="2.21552" diaginertia="0.00293 0.00892 0.00999"/>
+                <joint name="Joint5Left" pos="-0.456839 0.008910 -0.579903" axis="0 0 -1" range="-0.4363 0.5236" damping="10.0" frictionloss="15.0"/>
+                <geom type="mesh" rgba="0.75294 0.75294 0.75294 1" mesh="Link5Left" pos="-0.45 0 0"/>
+
+                <body name="Link6Left">
+                  <inertial pos="-0.35548 -0.02710 -0.58015" xyaxes="-0.00265 -1.00000 -0.00028 0.99993 -0.00265 -0.01176" mass="0.98365" diaginertia="0.00064 0.00345 0.00393"/>
+                  <joint name="Joint6Left" pos="-0.457839 0.023210 -0.579903" axis="0 1 0" range="-0.5236 0.1745" damping="10.0" frictionloss="25.0"/>
+                  <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="Link6Left" pos="-0.45 0 0"/>
+                  
+                  <body name="Link7Left">
+                    <inertial pos="-0.43790 0.04501 -0.65481" xyaxes="0.19478 -0.90115 -0.38729 -0.51513 -0.43000 0.74145" mass="0.85610" diaginertia="0.00122 0.00168 0.00236"/>
+                    <joint name="Joint7Left" pos="-0.457839 0.023210 -0.580003" axis="1 0 0" range="-0.5236 0.5236" damping="10.0" frictionloss="10.0"/>
+                    <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="Link7Left" pos="-0.45 0 0"/>
+                  </body>
+                </body>
+              </body>
+
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <!-- Right Side -->
+    <velocity name="Joint1" joint="Joint1" kv="5000"/>
+    <velocity name="Joint2" joint="Joint2" kv="5000"/>
+    <motor name="Joint3" joint="Joint3"/>
+    <velocity name="Joint4" joint="Joint4" kv="2000"/>
+    <motor name="Joint5" joint="Joint5"/>
+    <motor name="Joint6" joint="Joint6"/>
+    <motor name="Joint7" joint="Joint7"/>
+
+    <!-- Left Side -->
+    <velocity name="Joint1Left" joint="Joint1Left" kv="5000"/>
+    <velocity name="Joint2Left" joint="Joint2Left" kv="5000"/>
+    <motor name="Joint3Left" joint="Joint3Left"/>
+    <velocity name="Joint4Left" joint="Joint4Left" kv="2000"/>
+    <motor name="Joint5Left" joint="Joint5Left"/>
+    <motor name="Joint6Left" joint="Joint6Left"/>
+    <motor name="Joint7Left" joint="Joint7Left"/>
+  </actuator>
+</mujoco>

@@ -23,3 +23,6 @@ vendor/
 
 # Ignore folders related to IDEs
 .vscode/
+
+# Ignore macOS Finder metadata at every directory level.
+.DS_Store

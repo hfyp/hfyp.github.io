@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0e0e0b" />
     <meta name="description" content="An immersive, walkable museum of Yipeng Huangfu's research, education, projects, and interests." />
     <title>Immersive Museum · Yipeng Huangfu</title>
-    <link rel="stylesheet" href="./museum.css" />
+    <link rel="stylesheet" href="./museum.css?v=2" />
     <script type="importmap">
       {
         "imports": {
@@ -42,12 +42,13 @@
           <span>Academic</span><span>Projects</span>
           <span>Personal</span><span>Interaction</span>
           <b id="map-marker" aria-hidden="true"></b>
+          <i id="dog-map-marker" aria-hidden="true" title="Robot dog"></i>
         </div>
       </aside>
 
       <aside class="control-debug" id="control-debug" aria-live="polite">
         <div class="control-debug__heading">
-          <span><i></i> Input diagnostics</span>
+          <span><i></i> Museum diagnostics</span>
           <button id="reset-position" type="button" title="Return to the museum entrance">Reset <kbd>R</kbd></button>
         </div>
         <pre id="debug-output">Waiting for input…</pre>
@@ -59,7 +60,7 @@
           <h1>Four rooms.<br />One evolving practice.</h1>
           <p class="entry-copy">Walk through education, research projects, personal interests, and a stage reserved for future interaction experiments.</p>
           <button id="enter-button" type="button">Enter the museum <span>→</span></button>
-          <p class="controls-copy"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / arrow keys move &nbsp;·&nbsp; <kbd>Shift</kbd> sprint &nbsp;·&nbsp; mouse look &nbsp;·&nbsp; <kbd>E</kbd> inspect &nbsp;·&nbsp; <kbd>R</kbd> reset &nbsp;·&nbsp; <kbd>Esc</kbd> pause</p>
+          <p class="controls-copy"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / arrow keys move &nbsp;·&nbsp; <kbd>Shift</kbd> sprint &nbsp;·&nbsp; mouse look &nbsp;·&nbsp; <kbd>E</kbd> inspect &nbsp;·&nbsp; approach the robot dog within its white ring to guide it &nbsp;·&nbsp; <kbd>R</kbd> reset &nbsp;·&nbsp; <kbd>Esc</kbd> pause</p>
           <a class="entry-classic" href="../">Prefer a quick read? Open the Classic portfolio</a>
         </div>
       </section>
@@ -74,15 +75,14 @@
         </div>
       </section>
 
-      <div class="mobile-controls" id="mobile-controls" aria-label="Movement controls">
-        <button data-key="KeyW" aria-label="Move forward">↑</button>
-        <button data-key="KeyA" aria-label="Move left">←</button>
-        <button data-key="KeyS" aria-label="Move backward">↓</button>
-        <button data-key="KeyD" aria-label="Move right">→</button>
+      <div class="mobile-controls" id="mobile-controls" aria-label="Movement joystick">
+        <div class="mobile-joystick" id="mobile-joystick" role="application" aria-label="Drag to move">
+          <span class="mobile-joystick__thumb" id="mobile-joystick-thumb" aria-hidden="true"></span>
+        </div>
       </div>
 
       <noscript><p class="no-webgl">This museum requires JavaScript. The <a href="../">Classic portfolio</a> remains fully available.</p></noscript>
     </main>
-    <script type="module" src="./museum.js?v=8"></script>
+    <script type="module" src="./museum.js?v=18"></script>
   </body>
 </html>
