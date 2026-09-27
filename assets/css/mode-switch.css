@@ -1,25 +1,47 @@
 .mode-switch-item {
   align-items: center;
   display: flex !important;
-  gap: 0.45rem;
-  padding: 0 0.35rem;
+  margin-left: auto;
+  padding-left: 1rem;
   text-align: right;
-  width: 1%;
+  width: auto;
 }
 
 .greedy-nav .visible-links {
+  align-items: center;
+  display: flex;
+  min-width: 0;
   width: 100%;
 }
 
-.greedy-nav .visible-links #theme-toggle {
-  width: 1%;
+/* Keep the four primary sections visible in one compact row. The navigation
+   script leaves .persist items in place, so the dropdown is no longer needed. */
+.greedy-nav > button,
+.greedy-nav .hidden-links {
+  display: none !important;
 }
 
-.mode-switch-label {
-  color: var(--global-text-color-light, #666);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.greedy-nav {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.greedy-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.greedy-nav .visible-links .top-level-link {
+  font-size: 0.78rem;
+  font-weight: 500 !important;
+}
+
+.greedy-nav .visible-links .top-level-link > a {
+  margin: 0 0.58rem;
+  padding: 0.55rem 0;
+}
+
+.greedy-nav .visible-links .top-level-link:first-child > a {
+  margin-left: 0;
 }
 
 .mode-switch-link {
@@ -52,13 +74,82 @@
   width: 0.48rem;
 }
 
-@media (max-width: 640px) {
-  .mode-switch-label {
-    display: none;
+/* The classic portfolio is intentionally type-light: body copy sits only one
+   step above the navigation, while headings keep a restrained hierarchy. */
+.compact-content {
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.compact-content .page__title {
+  font-size: 1.35rem;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+
+.compact-content .page__content h2 {
+  font-size: 1.05rem;
+  margin-top: 1.65rem;
+}
+
+.compact-content .page__content h3 {
+  font-size: 0.96rem;
+  margin-top: 1.4rem;
+}
+
+.archive.compact-content > p,
+.archive.compact-content .archive__item p,
+.archive.compact-content .archive__item-excerpt {
+  font-size: 0.9rem;
+}
+
+.archive.compact-content .archive__item-title {
+  font-size: 1.05rem;
+  line-height: 1.3;
+  margin-top: 1.65rem;
+}
+
+@media (max-width: 900px) {
+  .greedy-nav .visible-links .top-level-link {
+    font-size: 0.72rem;
+  }
+
+  .greedy-nav .visible-links .top-level-link > a {
+    margin: 0 0.42rem;
   }
 
   .mode-switch-link {
     font-size: 0.72rem;
     padding: 0.52rem 0.68rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .masthead__inner-wrap {
+    padding-left: 0.65rem;
+    padding-right: 0.65rem;
+  }
+
+  .greedy-nav .visible-links .top-level-link {
+    font-size: 0.66rem;
+  }
+
+  .greedy-nav .visible-links .top-level-link > a {
+    margin: 0 0.25rem;
+  }
+
+  .mode-switch-item {
+    padding-left: 0.35rem;
+  }
+
+  .mode-switch-link {
+    font-size: 0;
+    gap: 0;
+    padding: 0.55rem !important;
+  }
+
+  .mode-switch-dot {
+    height: 0.55rem;
+    width: 0.55rem;
   }
 }

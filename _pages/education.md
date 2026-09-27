@@ -3,6 +3,7 @@ layout: single
 title: "Education"
 permalink: /education/
 author_profile: true
+compact_content: true
 ---
 
 ## University of California, Los Angeles (UCLA)

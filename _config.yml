@@ -26,8 +26,8 @@ author:
   name             : "Yipeng Huangfu"
   pronouns         : # example: "she/her"  
   bio              : "PhD Candidate in Mechanical Engineering"
-  location         : "Los Angeles, CA"
-  employer         : "University of California, Los Angeles"
+  location         :
+  employer         : "UCLA"
   uri              : # URL
   email            : "hfyp@ucla.edu" 
 

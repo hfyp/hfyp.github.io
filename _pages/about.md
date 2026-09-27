@@ -2,6 +2,7 @@
 permalink: /
 title: "About Me"
 author_profile: true
+compact_content: true
 redirect_from:
   - /about/
   - /about.html
