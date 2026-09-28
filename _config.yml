@@ -25,9 +25,9 @@ author:
   avatar           : "profile.png"
   name             : "Yipeng Huangfu"
   pronouns         : # example: "she/her"  
-  bio              : "PhD Candidate in Mechanical Engineering"
+  bio              : "PhD Candidate<br>in Mechanical Engineering<br>@ Mohala Lab | UCLA"
   location         :
-  employer         : "UCLA"
+  employer         :
   uri              : # URL
   email            : "hfyp@ucla.edu" 
 
